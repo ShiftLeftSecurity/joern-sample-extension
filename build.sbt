@@ -11,7 +11,10 @@ ThisBuild/resolvers ++= Seq(
 
 
 libraryDependencies ++= Seq(
-  "io.shiftleft" %% "semanticcpg" % "0.11.208",
+
+  "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r",
+
+  "io.shiftleft" %% "semanticcpg" % "0.11.210",
   "org.scalatest" %% "scalatest" % "3.0.8" % Test
 )
 
