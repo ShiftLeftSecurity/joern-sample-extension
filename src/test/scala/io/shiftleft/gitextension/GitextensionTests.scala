@@ -1,10 +1,9 @@
 package io.shiftleft.gitextension
 
-import io.shiftleft.GitExtensionOpts
-import io.shiftleft.gitextension.{Gitextension, GitExtensionOpts}
 import io.shiftleft.semanticcpg.layers.LayerCreatorContext
 import io.shiftleft.semanticcpg.testfixtures.CodeToCpgFixture
 import org.scalatest.{Matchers, WordSpec}
+import io.shiftleft.semanticcpg.language._
 
 class GitextensionTests extends WordSpec with Matchers {
 
@@ -17,10 +16,14 @@ class GitextensionTests extends WordSpec with Matchers {
 
   CodeToCpgFixture(code) { cpg =>
     val context = new LayerCreatorContext(cpg)
-    val options = new GitExtensionOpts("")
+    val options = GitExtensionOpts("")
     new Gitextension(options).create(context)
 
-    "should do something useful" in {}
+    "should do something useful" in {
+
+      cpg.tag.method.name.l shouldBe List("main")
+
+    }
 
   }
 
