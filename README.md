@@ -6,7 +6,7 @@ develop custom analyzers on top of the platform. Extensions are
 programs for the JVM that can be written in Java, Scala or
 Kotlin. They can access the code property graph via the query language
 OcularQL and can create new nodes, edges and properties via the
-DiffGraph API. Moreover, they can interface with Java library to, for
+DiffGraph API. Moreover, they can interface with Java libraries to, for
 example, access the network or file system.
 
 The Joern Git Extension is a minimal example of an extension. It reads
