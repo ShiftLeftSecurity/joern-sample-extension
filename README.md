@@ -31,4 +31,6 @@ start joern, type `run`. Your extension should be listed.
 Running
 -------
 
-On the joern shell, type `run.gitextension`
+On the joern shell, type `run.gitextension`. You can also
+inspect/modify options passed to the plugin by typing
+`opts.gitextension.<TAB>`.
