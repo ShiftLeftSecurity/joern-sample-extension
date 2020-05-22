@@ -7,14 +7,14 @@ programs for the JVM that can be written in Java, Scala or
 Kotlin. They can access the code property graph via the query language
 OcularQL and can create new nodes, edges and properties via the
 DiffGraph API. Moreover, they can interface with Java libraries to, for
-example, access the network or file system.
+example, to access the network or file system.
 
 The Joern Git Extension is a minimal example of an extension. It reads
 a git history using a Java library and tags nodes of functions that
 have recently been modified. The main purpose of this extension is to
 provide an example that shows how Joern extensions can be developed
 and tested in the IntelliJ IDE. The extension is written in Scala and
-makes use of a Java library.
+makes use of the Java library jgit.
 
 Dependencies
 ------------
@@ -35,7 +35,11 @@ start joern, type `run`. Your extension should be listed.
 
 ```bash
    cp target/universal/stage/lib/io.shiftleft.joern-sample-extension-*.jar $joern_install/lib/
+    cp target/universal/stage/lib/org.eclipse.jgit.org.eclipse.jgit* $joern_install/lib/
 ```
+
+where `$joern_install` is the directory where you installed Joern/Ocular.
+
 
 Running
 -------

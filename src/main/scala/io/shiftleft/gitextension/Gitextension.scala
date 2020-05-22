@@ -1,6 +1,7 @@
 package io.shiftleft.gitextension
 
 import better.files._
+import io.shiftleft.SerializedCpg
 import io.shiftleft.codepropertygraph.Cpg
 import io.shiftleft.passes.{CpgPass, DiffGraph}
 import io.shiftleft.semanticcpg.Overlays
@@ -67,7 +68,9 @@ class Gitextension(options : GitExtensionOpts) extends LayerCreator {
     cpg.method.name.foreach(println)
 
     /** Now, let's mddify the graph in a pass */
-    new MyPass(cpg).createApplySerializeAndStore(context.serializedCpg, serializeInverse)
+    val serializedCpg = context.outputDir.map(dir => new SerializedCpg(dir)).getOrElse(new SerializedCpg())
+    new MyPass(cpg).createApplySerializeAndStore(serializedCpg, serializeInverse)
+    serializedCpg.close()
     Overlays.appendOverlayName(cpg, overlayName)
 
   }
