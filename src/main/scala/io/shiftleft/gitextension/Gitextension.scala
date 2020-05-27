@@ -51,7 +51,7 @@ class Gitextension(options : GitExtensionOpts) extends LayerCreator {
 
     val cpg = context.cpg
     val pathToRepo = options.pathToRepo
-    println("pathToRepo: ")
+    println("pathToRepo: ", pathToRepo)
 
     /**
      * A bit of demo code to show that we can now interface with external
@@ -67,11 +67,10 @@ class Gitextension(options : GitExtensionOpts) extends LayerCreator {
     println("Printing list of methods detected:")
     cpg.method.name.foreach(println)
 
-    /** Now, let's mddify the graph in a pass */
+    /** Now, let's modify the graph in a pass */
     val serializedCpg = context.outputDir.map(dir => new SerializedCpg(dir)).getOrElse(new SerializedCpg())
     new MyPass(cpg).createApplySerializeAndStore(serializedCpg, serializeInverse)
     serializedCpg.close()
-    Overlays.appendOverlayName(cpg, overlayName)
 
   }
 
