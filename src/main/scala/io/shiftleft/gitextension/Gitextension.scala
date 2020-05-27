@@ -1,13 +1,20 @@
 package io.shiftleft.gitextension
 
+import java.io.ByteArrayOutputStream
+import java.nio.file.{Path, Paths}
+
 import better.files._
-import io.shiftleft.SerializedCpg
 import io.shiftleft.codepropertygraph.Cpg
 import io.shiftleft.passes.{CpgPass, DiffGraph}
-import io.shiftleft.semanticcpg.Overlays
 import io.shiftleft.semanticcpg.layers.{LayerCreator, LayerCreatorContext, LayerCreatorOptions}
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import io.shiftleft.semanticcpg.language._
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.diff.DiffFormatter
+import org.eclipse.jgit.treewalk.CanonicalTreeParser
+import org.eclipse.jgit.util.io.DisabledOutputStream
+
+import scala.jdk.CollectionConverters._
 
 object Gitextension {
 
@@ -15,13 +22,18 @@ object Gitextension {
    * This is the extensions official name as will be shown in the table
    * one obtains when running `run` on the Ocular shell.
    * */
-  val overlayName = "My extension"
+  val overlayName = "Sample Git Extension"
 
   /**
    * A short description to be shown in the table obtained when
    * running `run` on the Ocular shell.
    * */
-  val description = "My description"
+  val description =
+    """
+      |A sample extension that tags all files that have recently been modified.
+      |The main purpose of this extension is to showcase how extensions can
+      |be written and which interfaces are available for them.
+      |""".stripMargin
 
   /**
    * Option object initialize to defaults. This object will be made
@@ -48,39 +60,47 @@ class Gitextension(options : GitExtensionOpts) extends LayerCreator {
    * */
   override def create(context: LayerCreatorContext,
                       serializeInverse: Boolean): Unit = {
-
     val cpg = context.cpg
-    val pathToRepo = options.pathToRepo
-    println("pathToRepo: ", pathToRepo)
-
-    /**
-     * A bit of demo code to show that we can now interface with external
-     * JVM-based libraries
-     * */
-    val builder = new FileRepositoryBuilder()
-    val repository = builder.setGitDir(File(pathToRepo).toJava)
-
-    /**
-     * We can query the graph as well
-     * */
-
-    println("Printing list of methods detected:")
-    cpg.method.name.foreach(println)
-
-    /** Now, let's modify the graph in a pass */
-    val serializedCpg = context.outputDir.map(dir => new SerializedCpg(dir)).getOrElse(new SerializedCpg())
-    new MyPass(cpg).createApplySerializeAndStore(serializedCpg, serializeInverse)
+    val serializedCpg = initSerializedCpg(context.outputDir, "gitextension", 0)
+    new DetermineChangedFilesPass(cpg).createApplySerializeAndStore(serializedCpg, serializeInverse)
     serializedCpg.close()
-
   }
 
-  private class MyPass(cpg : Cpg) extends CpgPass(cpg) {
+  private class DetermineChangedFilesPass(cpg : Cpg) extends CpgPass(cpg) {
     override def run(): Iterator[DiffGraph] = {
       implicit val diffGraph: DiffGraph.Builder = DiffGraph.newBuilder
-      // You can modify the graph here
-      cpg.method.name(".*main.*").newTagNode("RECENTLY_CHANGED").store
+      val changedFiles = recentlyChangedFiles().map(_.toAbsolutePath.toString)
+      cpg.file.name(changedFiles :_* ).newTagNode("RECENTLY_CHANGED").store
       Iterator(diffGraph.build)
     }
+
+    private def recentlyChangedFiles(commitsToGoBack : Int = 10): List[Path] = {
+      val builder = new FileRepositoryBuilder()
+      val repository = builder.setGitDir(File(options.pathToRepo).toJava).setMustExist(true)
+        .build()
+      val git = new Git(repository)
+      val reader = repository.newObjectReader()
+
+      def createIterFor(commit : String) = {
+        val iter = new CanonicalTreeParser()
+        iter.reset(reader, repository.resolve(commit))
+        iter
+      }
+
+      val nCommitsAvailable = git.log().setMaxCount(commitsToGoBack).call().asScala.toList.size
+      if(nCommitsAvailable == 0) {
+        List()
+      } else {
+        val oldTreeIter = createIterFor(s"HEAD~${nCommitsAvailable-1}^{tree}")
+        val newTreeIter = createIterFor(s"HEAD^{tree}")
+        val diffFormatter = new DiffFormatter(DisabledOutputStream.INSTANCE)
+        diffFormatter.setRepository(repository)
+        diffFormatter.scan(oldTreeIter, newTreeIter).asScala.toList.map{ entry =>
+          Paths.get(repository.getDirectory.getParent, entry.getNewPath)
+        }
+      }
+    }
+
   }
 
   /**

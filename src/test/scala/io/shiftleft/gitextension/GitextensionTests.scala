@@ -1,28 +1,32 @@
 package io.shiftleft.gitextension
 
+import java.nio.file.Paths
+
 import io.shiftleft.semanticcpg.layers.LayerCreatorContext
-import io.shiftleft.semanticcpg.testfixtures.CodeToCpgFixture
+import io.shiftleft.semanticcpg.testfixtures.CodeDirToCpgFixture
 import org.scalatest.{Matchers, WordSpec}
 import io.shiftleft.semanticcpg.language._
+import java.io.{File => JFile}
 
 class GitextensionTests extends WordSpec with Matchers {
 
-  private val code =
-    """
-      |int main(int argc, char **argv) {
-      |
-      |}
-      |""".stripMargin
+  val pathToRepo = "src/test/resources/testrepo"
 
-  CodeToCpgFixture(code) { cpg =>
+  CodeDirToCpgFixture(new JFile(pathToRepo)) { cpg =>
     val context = new LayerCreatorContext(cpg)
-    val options = GitExtensionOpts("")
+    val options = GitExtensionOpts(Paths.get(pathToRepo, "dotgit").toString)
     new Gitextension(options).create(context)
 
-    "should do something useful" in {
+    "find a valid test setup" in {
+      new JFile(pathToRepo).exists() shouldBe true
+      new JFile(Paths.get(pathToRepo, "dotgit").toString).exists() shouldBe true
+      cpg.method.name("main").size shouldBe 1
+    }
 
-      cpg.tag.method.name.l shouldBe List("main")
-
+    "mark only function `foo` as recently changed" in {
+      val changedFiles = new Tag(cpg.tag.name("RECENTLY_CHANGED")).file.name.l
+      changedFiles.size shouldBe 1
+      changedFiles.head.endsWith("justadded.c") shouldBe true
     }
 
   }
