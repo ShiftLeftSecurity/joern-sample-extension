@@ -61,11 +61,22 @@ Importing into IntelliJ and running tests
 
 Joern Extensions can be developed in an IDE and the process of
 importing an extension may differ slightly from IDE to IDE. The
-following instructions are for IntelliJ.
+following instructions are for IntelliJ 2020.1.1.
+
+Choose "Open or Import" to import the project.
 
 ![IntelliJ start screen](img/startscreen.png)
 
 
+Next, select the directory from the file selector. Assuming that your
+IntelliJ installation has support for `sbt` installed, the import is
+fully automated.
+
 ![Just select the project](img/select.png)
+
+
+Finally, navigate to `src/test/scala/io/shiftleft/gitextension` and
+click on `GitextentionTests`. You can right-click on the class or the
+individual tests to run them.
 
 ![Right click](img/runtests.png)
