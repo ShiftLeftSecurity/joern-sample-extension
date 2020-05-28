@@ -12,10 +12,10 @@ Intro
 Joern/Ocular provide a runtime extension mechanism that allows you to
 develop custom analyzers on top of the platform. Extensions are
 programs for the JVM that can be written in Java, Scala or
-Kotlin. They can access the code property graph via a query language
+Kotlin. They can access the Code Property Praph via a query language
 and create new nodes, edges and properties via the
-DiffGraph API. Moreover, they can interface with Java libraries to, for
-example, to access the network or file system.
+DiffGraph API. Moreover, they can interface with Java libraries to accomplish
+different tasks, like accessing the network or writing to the file system.
 
 The Joern Git Extension is a minimal example of an extension. It reads
 a git history using a Java library and tags nodes of files that have
