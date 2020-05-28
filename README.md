@@ -51,7 +51,11 @@ where `$joern_install` is the directory where you installed Joern/Ocular.
 Running
 -------
 
-On the joern shell, type `run.gitextension`. You can also
+On the joern shell, type `run`. You should see the extension in the overview:
+
+![Run output](img/run.png)
+
+To run the extension, type `run.gitextension`. You can also
 inspect/modify options passed to the plugin by typing
 `opts.gitextension.<TAB>`.
 
