@@ -9,12 +9,12 @@ ThisBuild/resolvers ++= Seq(
   Resolver.bintrayRepo("shiftleft", "maven"),
   "Sonatype OSS" at "https://oss.sonatype.org/content/repositories/public")
 
+val cpgVersion = "0.12.36"
 
 libraryDependencies ++= Seq(
-
   "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r",
-
-  "io.shiftleft" %% "semanticcpg" % "0.11.251",
+  "io.shiftleft" %% "semanticcpg" % cpgVersion,
+  "io.shiftleft" %% "semanticcpg" % cpgVersion % Test classifier "tests",
   "org.scalatest" %% "scalatest" % "3.0.8" % Test
 )
 
