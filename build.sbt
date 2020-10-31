@@ -2,7 +2,7 @@ name := "joern-sample-extension"
 ThisBuild/organization := "io.shiftleft"
 ThisBuild/scalaVersion := "2.13.1"
 
-val cpgVersion = "1.2.15+0-2d48b156+20201031-2022"
+val cpgVersion = "1.2.16"
 
 enablePlugins(JavaAppPackaging)
 
