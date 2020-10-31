@@ -2,6 +2,8 @@ name := "joern-sample-extension"
 ThisBuild/organization := "io.shiftleft"
 ThisBuild/scalaVersion := "2.13.1"
 
+val cpgVersion = "1.2.16"
+
 enablePlugins(JavaAppPackaging)
 
 ThisBuild/resolvers ++= Seq(
@@ -13,9 +15,10 @@ ThisBuild/resolvers ++= Seq(
 libraryDependencies ++= Seq(
 
   "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r",
-
-  "io.shiftleft" %% "semanticcpg" % "0.11.251",
-  "org.scalatest" %% "scalatest" % "3.0.8" % Test
+  "io.shiftleft" %% "semanticcpg" % cpgVersion,
+  "io.shiftleft" %% "semanticcpg-tests" % cpgVersion % Test classifier "tests",
+  "io.shiftleft" %% "fuzzyc2cpg" % cpgVersion % Test,
+  "org.scalatest" %% "scalatest" % "3.1.1" % Test
 )
 
 ThisBuild/Compile/scalacOptions ++= Seq(
